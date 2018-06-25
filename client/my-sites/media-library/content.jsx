@@ -299,6 +299,7 @@ class MediaLibraryContent extends React.Component {
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
 					hasRefreshButton={ 'pexels' !== this.props.source }
+					hasDateFilters={ 'google_photos' === this.props.source }
 				/>
 			);
 		}
