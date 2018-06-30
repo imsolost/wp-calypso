@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-
+import moment from 'moment';
 /**
  * Internal dependencies
  */
@@ -45,6 +45,16 @@ class MediaLibraryContent extends React.Component {
 		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
+		dateRange: function( props, propName, componentName ) {
+			if (
+				! moment.isMoment( props[ propName ].from ) ||
+				! moment.isMoment( props[ propName ].to )
+			) {
+				return new Error(
+					`Invalid prop ${ propName } supplied to ${ componentName }. Must be a valid momentJS object (https://momentjs.com/docs/#/query/is-a-moment/)`
+				);
+			}
+		},
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -262,6 +272,7 @@ class MediaLibraryContent extends React.Component {
 				filter={ this.props.filter }
 				search={ this.props.search }
 				source={ this.props.source }
+				dateRange={ this.props.dateRange }
 			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
@@ -270,6 +281,7 @@ class MediaLibraryContent extends React.Component {
 						filter={ this.props.filter }
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 						search={ this.props.search }
+						dateRange={ this.props.dateRange }
 						containerWidth={ this.props.containerWidth }
 						thumbnailType={ this.getThumbnailType() }
 						single={ this.props.single }
@@ -290,6 +302,7 @@ class MediaLibraryContent extends React.Component {
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
+					onDateChange={ this.props.onDateChange }
 					site={ this.props.site }
 					visible={ ! this.props.isRequesting }
 					canCopy={ this.props.postId === undefined }
