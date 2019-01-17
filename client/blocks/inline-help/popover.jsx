@@ -14,7 +14,11 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_CHECKLIST } from './constants';
-import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
+import {
+	selectResult,
+	resetInlineHelpContactForm,
+	hideChecklistPrompt,
+} from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -102,6 +106,7 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
+		this.props.hideChecklistPrompt();
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -111,6 +116,15 @@ class InlineHelpPopover extends Component {
 
 	openChecklistView = () => {
 		this.openSecondaryView( VIEW_CHECKLIST );
+	};
+
+	closePopover = () => {
+		// Disable implicit close when checklist prompt is visible.
+		if ( this.state.showSecondaryView && this.state.activeSecondaryView === VIEW_CHECKLIST ) {
+			return null;
+		}
+
+		this.props.onClose();
 	};
 
 	renderSecondaryView = () => {
@@ -204,7 +218,7 @@ class InlineHelpPopover extends Component {
 		return (
 			<Popover
 				isVisible
-				onClose={ this.props.onClose }
+				onClose={ this.closePopover }
 				position="top left"
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
@@ -333,6 +347,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
+	hideChecklistPrompt,
 };
 
 export default connect(

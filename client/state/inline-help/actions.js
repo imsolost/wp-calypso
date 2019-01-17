@@ -14,6 +14,8 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
+	INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
+	INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
 	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
 	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
 } from 'state/action-types';
@@ -155,6 +157,24 @@ export function hideChecklistPrompt() {
 	return dispatch => {
 		dispatch( {
 			type: INLINE_HELP_CHECKLIST_PROMPT_HIDE,
+		} );
+	};
+}
+
+export function setChecklistPromptTaskId( taskId ) {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
+			taskId,
+		} );
+	};
+}
+
+export function setChecklistPromptStep( step ) {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
+			step,
 		} );
 	};
 }

@@ -123,3 +123,17 @@ export function isInlineHelpPopoverVisible( state ) {
 export function isInlineHelpChecklistPromptVisible( state ) {
 	return get( state, 'inlineHelp.checklistPrompt.isVisible', false );
 }
+
+/**
+ * Returns the task ID that should show up in the inline help popover.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {String}         The task ID
+ */
+export function getChecklistPromptTaskId( state ) {
+	return get( state, 'inlineHelp.checklistPrompt.taskId', null );
+}
+
+export function getChecklistPromptStep( state ) {
+	return get( state, 'inlineHelp.checklistPrompt.step', 0 );
+}
