@@ -54,12 +54,16 @@ class MediaLibraryContent extends React.Component {
 		onEditItem: PropTypes.func,
 		postId: PropTypes.number,
 		isConnected: PropTypes.bool,
+		queryFilters: PropTypes.object,
+		onQueryFiltersChange: PropTypes.func,
 	};
 
 	static defaultProps = {
 		mediaValidationErrors: Object.freeze( {} ),
 		onAddMedia: noop,
 		source: '',
+		queryFilters: {},
+		onQueryFiltersChange: noop,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -263,6 +267,7 @@ class MediaLibraryContent extends React.Component {
 				filter={ this.props.filter }
 				search={ this.props.search }
 				source={ this.props.source }
+				queryFilters={ this.props.queryFilters }
 			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
@@ -304,6 +309,8 @@ class MediaLibraryContent extends React.Component {
 					hasAttribution={ 'pexels' === this.props.source }
 					hasRefreshButton={ 'pexels' !== this.props.source }
 					hasDateFilters={ 'google_photos' === this.props.source }
+					queryFilters={ this.props.queryFilters }
+					onQueryFiltersChange={ this.props.onQueryFiltersChange }
 				/>
 			);
 		}

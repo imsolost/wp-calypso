@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { isEqual, toArray, some } from 'lodash';
+import { isEqual, toArray, some, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -64,6 +64,8 @@ class MediaLibrary extends Component {
 		postId: PropTypes.number,
 		disableLargeImageSources: PropTypes.bool,
 		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+		queryFilters: PropTypes.object,
+		onQueryFiltersChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -74,6 +76,8 @@ class MediaLibrary extends Component {
 		source: '',
 		disableLargeImageSources: false,
 		disabledDataSources: [],
+		queryFilters: {},
+		onQueryFiltersChange: noop,
 	};
 
 	componentWillMount() {
@@ -181,6 +185,8 @@ class MediaLibrary extends Component {
 				onEditItem={ this.props.onEditItem }
 				onViewDetails={ this.props.onViewDetails }
 				postId={ this.props.postId }
+				queryFilters={ this.props.queryFilters }
+				onQueryFiltersChange={ this.props.onQueryFiltersChange }
 			/>
 		);
 
