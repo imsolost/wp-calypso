@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { isEqual, toArray, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -52,22 +51,11 @@ class MediaLibrary extends Component {
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
 		search: PropTypes.string,
 		source: PropTypes.string,
-		dateRange: function( props, propName, componentName ) {
-			if (
-				! moment.isMoment( props[ propName ].from ) ||
-				! moment.isMoment( props[ propName ].to )
-			) {
-				return new Error(
-					`Invalid prop ${ propName } supplied to ${ componentName }. Must be a valid momentJS object (https://momentjs.com/docs/#/query/is-a-moment/)`
-				);
-			}
-		},
 		onAddMedia: PropTypes.func,
 		onFilterChange: PropTypes.func,
 		onSourceChange: PropTypes.func,
 		onSearch: PropTypes.func,
 		onScaleChange: PropTypes.func,
-		onDateChange: PropTypes.func,
 		onEditItem: PropTypes.func,
 		fullScreenDropZone: PropTypes.bool,
 		containerWidth: PropTypes.number,
@@ -82,7 +70,6 @@ class MediaLibrary extends Component {
 		fullScreenDropZone: true,
 		onAddMedia: () => {},
 		onScaleChange: () => {},
-		onDateChange: () => {},
 		scrollable: false,
 		source: '',
 		disableLargeImageSources: false,
@@ -176,6 +163,7 @@ class MediaLibrary extends Component {
 			<Content
 				site={ this.props.site }
 				filter={ this.props.filter }
+				onFilterChange={ this.props.onFilterChange }
 				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 				search={ this.props.search }
 				source={ this.props.source }
@@ -187,7 +175,6 @@ class MediaLibrary extends Component {
 				onAddMedia={ this.onAddMedia }
 				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
-				onDateChange={ this.props.onDateChange }
 				onSourceChange={ this.props.onSourceChange }
 				selectedItems={ this.props.mediaLibrarySelectedItems }
 				onDeleteItem={ this.props.onDeleteItem }
@@ -234,11 +221,11 @@ class MediaLibrary extends Component {
 	}
 }
 
+const filterConnectedServices = item => item.type === 'other' && item.status === 'ok';
+
 export default connect(
 	state => ( {
-		connectedServices: toArray( getKeyringConnections( state ) ).filter(
-			item => item.type === 'other' && item.status === 'ok'
-		),
+		connectedServices: toArray( getKeyringConnections( state ) ).filter( filterConnectedServices ),
 		isRequesting: isKeyringConnectionsFetching( state ),
 	} ),
 	{
