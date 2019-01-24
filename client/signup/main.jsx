@@ -124,6 +124,8 @@ class Signup extends React.Component {
 
 		let providedDependencies;
 
+		this.submitQueryDependencies();
+
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
@@ -136,8 +138,6 @@ class Signup extends React.Component {
 			reduxStore: this.context.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
-
-		this.submitQueryDependencies();
 
 		this.updateShouldShowLoadingScreen();
 
