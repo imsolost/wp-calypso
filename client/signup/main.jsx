@@ -256,7 +256,12 @@ class Signup extends React.Component {
 
 		const {
 			initialContext: {
-				query: { vertical, site_type: siteType },
+				query: {
+					vertical,
+					site_type: siteType,
+					exclude_plan: excludePlanStep,
+					exclude_domain: excludeDomainStep,
+				},
 			},
 			flowName,
 		} = this.props;
@@ -307,6 +312,22 @@ class Signup extends React.Component {
 			fulfilledSteps.push( siteTypeStepName );
 
 			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
+		}
+
+		if ( 'undefined' !== typeof excludePlanStep ) {
+			let planStepName = '';
+			if ( 'site-launch' === flowName ) {
+				planStepName = 'plans';
+			}
+			planStepName && fulfilledSteps.push( planStepName );
+		}
+
+		if ( 'undefined' !== typeof excludeDomainStep ) {
+			let domainStepName = '';
+			if ( 'site-launch' === flowName ) {
+				domainStepName = 'domains-site-selected';
+			}
+			domainStepName && fulfilledSteps.push( domainStepName );
 		}
 
 		flows.excludeSteps( fulfilledSteps );
