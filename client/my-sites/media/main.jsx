@@ -48,9 +48,20 @@ class Media extends Component {
 		source: '',
 	};
 
+	constructor( props ) {
+		super( props );
+		this.containerRef = React.createRef();
+	}
+
 	componentDidMount() {
+		// This is deemed valid, see:
+		// "when you need to measure a DOM node before rendering
+		// something that depends on its size or position."
+		// https://reactjs.org/docs/react-component.html#componentdidmount
+
+		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( {
-			containerWidth: this.refs.container.clientWidth,
+			containerWidth: this.containerRef.clientWidth,
 		} );
 	}
 
@@ -350,7 +361,7 @@ class Media extends Component {
 	render() {
 		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
 		return (
-			<div ref="container" className="main main-column media" role="main">
+			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
