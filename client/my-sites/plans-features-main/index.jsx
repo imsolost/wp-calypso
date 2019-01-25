@@ -69,6 +69,7 @@ export class PlansFeaturesMain extends Component {
 			domainName,
 			isInSignup,
 			isLandingPage,
+			isLaunchPage,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -96,6 +97,7 @@ export class PlansFeaturesMain extends Component {
 					domainName={ domainName }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
+					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					visiblePlans={ visiblePlans }
