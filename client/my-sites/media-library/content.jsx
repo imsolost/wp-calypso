@@ -41,7 +41,7 @@ import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { reduxDispatch } from 'lib/redux-bridge';
 
-class MediaLibraryContent extends React.Component {
+export class MediaLibraryContent extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,
@@ -71,9 +71,10 @@ class MediaLibraryContent extends React.Component {
 		}
 
 		if (
-			this.hasExternalServiceExpired( prevProps ) !== this.hasExternalServiceExpired( this.props )
+			! this.hasGoogleServiceExpired( prevProps ) &&
+			this.hasGoogleServiceExpired( this.props )
 		) {
-			// As soon as we detect a service has expired then trigger a keyring refresh so we get a proper service status.
+			// As soon as we detect Google has expired, trigger a keyring refresh so our keyring store is updated
 			this.props.requestKeyringConnections();
 		}
 
@@ -81,17 +82,21 @@ class MediaLibraryContent extends React.Component {
 			this.getGoogleStatus( prevProps ) === 'invalid' &&
 			this.getGoogleStatus( this.props ) === 'ok'
 		) {
-			// Picasa => Google Photos migration complete. Force a refresh of the list (this won't
-			// happen automatically as we've cached our previous query that failed)
+			// Transitioned from an invalid Google status to a valid one - migration is complete
+			// Force a refresh of the list (this won't happen automatically as we've cached our previous query that failed)
 			MediaActions.sourceChanged( this.props.site.ID );
 		}
 	}
 
 	getGoogleStatus( props ) {
-		const { connections } = props;
+		const { connections, source } = props;
 		const google = connections.find( item => item.service === 'google_photos' );
 
-		return google ? google.status : null;
+		if ( source === 'google_photos' && google ) {
+			return google.status;
+		}
+
+		return null;
 	}
 
 	renderErrors() {
@@ -282,16 +287,30 @@ class MediaLibraryContent extends React.Component {
 		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
 	}
 
-	hasExternalServiceExpired( props ) {
+	hasGoogleServiceExpired( props ) {
 		const { mediaValidationErrorTypes, source } = props;
 
-		return source !== '' && mediaValidationErrorTypes.indexOf( 'SERVICE_AUTH_FAILED' ) !== -1;
+		return (
+			source === 'google_photos' &&
+			mediaValidationErrorTypes.indexOf( MediaValidationErrors.SERVICE_AUTH_FAILED ) !== -1
+		);
 	}
 
 	needsToBeConnected() {
 		const { source, isConnected } = this.props;
 
-		return source !== '' && ( ! isConnected || this.hasExternalServiceExpired( this.props ) );
+		// If on internal service then we don't need to be connected
+		if ( source === '' ) {
+			return false;
+		}
+
+		// Already connected - don't need to be connected again
+		if ( isConnected ) {
+			return false;
+		}
+
+		// If we're on the Google service and it's expired then we need connecting
+		return this.hasGoogleServiceExpired( this.props );
 	}
 
 	renderMediaList() {
@@ -338,7 +357,7 @@ class MediaLibraryContent extends React.Component {
 	renderHeader() {
 		if (
 			( ! this.props.isConnected && this.needsToBeConnected() ) ||
-			this.hasExternalServiceExpired( this.props )
+			this.hasGoogleServiceExpired( this.props )
 		) {
 			return null;
 		}
