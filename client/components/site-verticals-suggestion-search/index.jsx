@@ -51,7 +51,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		}
 	}
 
-	searchInResult = value =>
+	searchInResult = ( value = '' ) =>
 		find(
 			this.props.verticals,
 			item => item.vertical_name.toLowerCase() === value.toLowerCase() && ! isEmpty( item.preview )
